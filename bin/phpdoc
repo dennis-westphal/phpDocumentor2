@@ -11,7 +11,21 @@ use Symfony\Component\Dotenv\Dotenv;
 
 set_time_limit(0);
 
-$loader = require __DIR__.'/../vendor/autoload.php';
+$autoloadFiles = [
+	__DIR__ . '/../vendor/autoload.php',
+	__DIR__ . '/../../../autoload.php'
+];
+
+foreach ($autoloadFiles as $autoloadFile) {
+	if (file_exists($autoloadFile)) {
+		$loader = require_once $autoloadFile;
+		break;
+	}
+}
+
+if(!class_exists(AnnotationRegistry::class)) {
+	throw new \RuntimeException('Autoloader not found; make sure the autoload script exists in vendor/autoload.php');
+}
 
 AnnotationRegistry::registerLoader([$loader, 'loadClass']);
 
